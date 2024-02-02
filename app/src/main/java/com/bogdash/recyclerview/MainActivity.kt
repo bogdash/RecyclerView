@@ -31,6 +31,12 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        binding.fabAddContactItem.setOnClickListener {
+            val addContactDialog = AddContactDialogFragment()
+            addContactDialog.show(supportFragmentManager, "AddContactDialogFragment")
+        }
+
+
     }
 
     private fun populateList() {
