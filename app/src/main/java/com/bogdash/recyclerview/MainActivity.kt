@@ -2,6 +2,9 @@ package com.bogdash.recyclerview
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,11 +35,43 @@ class MainActivity : AppCompatActivity() {
         })
 
         binding.fabAddContactItem.setOnClickListener {
-            val addContactDialog = AddContactDialogFragment()
-            addContactDialog.show(supportFragmentManager, "AddContactDialogFragment")
+            showDialog()
         }
+    }
 
+    private fun showDialog() {
+        val builder = AlertDialog.Builder(this)
+        val inflater = layoutInflater
+        val dialogLayout = inflater.inflate(R.layout.dialog, null)
+        val editTextFirstName = dialogLayout.findViewById<EditText>(R.id.tied_firstname)
+        val editTextLastName = dialogLayout.findViewById<EditText>(R.id.tied_lastname)
+        val editTextPhone = dialogLayout.findViewById<EditText>(R.id.ed_phone)
 
+        var firstName: String
+        var lastName: String
+        var phone: String
+
+        with(builder) {
+            setPositiveButton("OK"){ dialog, which ->
+                firstName = editTextFirstName.text.toString()
+                lastName = editTextLastName.text.toString()
+                phone = editTextPhone.text.toString()
+                Log.d("MyLog", firstName)
+                Log.d("MyLog", lastName)
+                Log.d("MyLog", phone)
+
+                val newId = contactItemList.size + 1
+                contactItemList.add(ContactItem(newId, firstName, lastName, phone.toInt()))
+                adapter.notifyDataSetChanged()
+                Log.d("MyLog", newId.toString())
+            }
+            setNegativeButton("Cancel"){ _, _ ->
+                Log.d("MyLog", "Negative button clicked")
+            }
+
+            setView(dialogLayout)
+            show()
+        }
     }
 
     private fun populateList() {
