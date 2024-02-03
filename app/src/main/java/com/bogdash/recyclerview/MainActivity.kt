@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
 
                 val newId = contactItemList.size + 1
                 contactItemList.add(ContactItem(newId, firstName, lastName, phone.toInt()))
-                adapter.notifyDataSetChanged()
+                adapter.notifyDataSetChanged() //diff util
                 Log.d("MyLog", newId.toString())
             }
             setNegativeButton("Cancel"){ _, _ ->
