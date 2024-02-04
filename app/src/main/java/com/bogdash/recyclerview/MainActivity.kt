@@ -53,6 +53,10 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.delete -> {
+                binding.fabAddContactItem.visibility = View.GONE
+                binding.fabCheck.visibility = View.VISIBLE
+                binding.fabCancel.visibility = View.VISIBLE
+
                 Toast.makeText(this, "Menu Item is Pressed", Toast.LENGTH_SHORT).show()
                 for (contactItem in contactItemList) {
                     contactItem.isChecked = !contactItem.isChecked
