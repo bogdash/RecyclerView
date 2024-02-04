@@ -3,6 +3,7 @@ package com.bogdash.recyclerview
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -37,6 +38,11 @@ class MainActivity : AppCompatActivity() {
         binding.fabAddContactItem.setOnClickListener {
             showDialog()
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return super.onCreateOptionsMenu(menu)
     }
 
     private fun showDialog() {
