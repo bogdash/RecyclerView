@@ -1,13 +1,17 @@
 package com.bogdash.recyclerview
 
 import android.content.Context
+import android.provider.ContactsContract.DisplayPhoto
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.bogdash.recyclerview.databinding.ContactItemLayoutBinding
 
 class ContactItemAdapter(
+    private val mainActivity: MainActivity,
     private val context: Context, private val contactItemList: MutableList<ContactItem>
 ) : RecyclerView.Adapter<ContactItemAdapter.ContactItemViewHolder>() {
 
@@ -23,6 +27,9 @@ class ContactItemAdapter(
     override fun onBindViewHolder(holder: ContactItemViewHolder, position: Int) {
         val contactItem = contactItemList[position]
         holder.bind(contactItem)
+        holder.itemView.setOnClickListener {
+            mainActivity.editDialog(position)
+        }
     }
 
     class ContactItemViewHolder(contactItemLayoutBinding: ContactItemLayoutBinding) :

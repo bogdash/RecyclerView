@@ -1,5 +1,6 @@
 package com.bogdash.recyclerview
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.bogdash.recyclerview.databinding.ActivityMainBinding
+import java.text.FieldPosition
 
 class MainActivity : AppCompatActivity() {
     private val contactItemList: MutableList<ContactItem> = mutableListOf()
@@ -104,6 +106,42 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun editDialog(position: Int) {
+        val builder = AlertDialog.Builder(this)
+        val inflater = layoutInflater
+        val dialogLayout = inflater.inflate(R.layout.dialog, null)
+        val editTextFirstName = dialogLayout.findViewById<EditText>(R.id.tied_firstname)
+        val editTextLastName = dialogLayout.findViewById<EditText>(R.id.tied_lastname)
+        val editTextPhone = dialogLayout.findViewById<EditText>(R.id.ed_phone)
+
+        var firstName: String
+        var lastName: String
+        var phone: String
+
+        editTextFirstName.setText(contactItemList[position].firstName)
+        editTextLastName.setText(contactItemList[position].lastName)
+        editTextPhone.setText(contactItemList[position].phone.toString())
+
+        with(builder) {
+            setPositiveButton("Ok") { dialog, which ->
+                firstName = editTextFirstName.text.toString()
+                lastName = editTextLastName.text.toString()
+                phone = editTextPhone.text.toString()
+
+                contactItemList[position].firstName = firstName
+                contactItemList[position].lastName = lastName
+                contactItemList[position].phone = phone.toInt()
+                adapter.notifyDataSetChanged()
+            }
+            setNegativeButton("Cancel"){ _, _ ->
+                Log.d("MyLog", "Negative button clicked")
+            }
+
+            setView(dialogLayout)
+            show()
+        }
+    }
+
     private fun populateList() {
         for (item in 1..30) {
             val firstName = "Ivan $item"
@@ -116,7 +154,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setUpAdapter() {
-        adapter = ContactItemAdapter(this, contactItemList)
+        adapter = ContactItemAdapter(this,this, contactItemList)
         binding.rvContactItems.adapter = adapter
         binding.rvContactItems.layoutManager = LinearLayoutManager(this)
         binding.rvContactItems.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
