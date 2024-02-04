@@ -2,6 +2,7 @@ package com.bogdash.recyclerview
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bogdash.recyclerview.databinding.ContactItemLayoutBinding
@@ -33,6 +34,7 @@ class ContactItemAdapter(
             binding.tvFirstname.text = contactItem.firstName
             binding.tvLastname.text = contactItem.lastName
             binding.tvPhone.text = "${contactItem.phone}"
+            binding.checkBox.visibility = if (contactItem.isChecked) View.VISIBLE else View.GONE
         }
     }
 }

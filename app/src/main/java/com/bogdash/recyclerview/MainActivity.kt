@@ -4,7 +4,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -40,10 +44,26 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // menu
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
         return super.onCreateOptionsMenu(menu)
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.delete -> {
+                Toast.makeText(this, "Menu Item is Pressed", Toast.LENGTH_SHORT).show()
+                for (contactItem in contactItemList) {
+                    contactItem.isChecked = !contactItem.isChecked
+                }
+                adapter.notifyDataSetChanged()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
 
     private fun showDialog() {
         val builder = AlertDialog.Builder(this)
