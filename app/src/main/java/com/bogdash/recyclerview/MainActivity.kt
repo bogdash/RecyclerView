@@ -44,7 +44,25 @@ class MainActivity : AppCompatActivity() {
         binding.fabAddContactItem.setOnClickListener {
             showDialog()
         }
+
+        binding.fabCheck.setOnClickListener {
+            deleteCheckedItems()
+        }
+
+        binding.fabCancel.setOnClickListener {
+            clearChecks()
+            binding.fabCancel.visibility = View.GONE
+            binding.fabCheck.visibility = View.GONE
+            binding.fabAddContactItem.visibility = View.VISIBLE
+        }
     }
+    fun clearChecks() {
+        for (contactItem in contactItemList) {
+            contactItem.isChecked = false
+        }
+        adapter.notifyDataSetChanged()
+    }
+
 
     // menu
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -70,6 +88,7 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    // dialog
 
     private fun showDialog() {
         val builder = AlertDialog.Builder(this)
@@ -84,7 +103,7 @@ class MainActivity : AppCompatActivity() {
         var phone: String
 
         with(builder) {
-            setPositiveButton("OK"){ dialog, which ->
+            setPositiveButton("OK") { dialog, which ->
                 firstName = editTextFirstName.text.toString()
                 lastName = editTextLastName.text.toString()
                 phone = editTextPhone.text.toString()
@@ -93,11 +112,11 @@ class MainActivity : AppCompatActivity() {
                 Log.d("MyLog", phone)
 
                 val newId = contactItemList.size + 1
-                contactItemList.add(ContactItem(newId, firstName, lastName, phone.toInt()))
+                contactItemList.add(ContactItem(newId, firstName, lastName, phone.toUInt()))
                 adapter.notifyDataSetChanged() //diff util
                 Log.d("MyLog", newId.toString())
             }
-            setNegativeButton("Cancel"){ _, _ ->
+            setNegativeButton("Cancel") { _, _ ->
                 Log.d("MyLog", "Negative button clicked")
             }
 
@@ -130,10 +149,10 @@ class MainActivity : AppCompatActivity() {
 
                 contactItemList[position].firstName = firstName
                 contactItemList[position].lastName = lastName
-                contactItemList[position].phone = phone.toInt()
+                contactItemList[position].phone = phone.toUInt()
                 adapter.notifyDataSetChanged()
             }
-            setNegativeButton("Cancel"){ _, _ ->
+            setNegativeButton("Cancel") { _, _ ->
                 Log.d("MyLog", "Negative button clicked")
             }
 
@@ -146,17 +165,32 @@ class MainActivity : AppCompatActivity() {
         for (item in 1..30) {
             val firstName = "Ivan $item"
             val lastName = "Ivanovich $item"
-            val phone = (100*item)
+            val phone = (100 * item).toUInt()
 
-            val contactItem = ContactItem(id = item, firstName = firstName, lastName = lastName, phone = phone)
+            val contactItem =
+                ContactItem(id = item, firstName = firstName, lastName = lastName, phone = phone)
             contactItemList.add(contactItem)
         }
     }
 
+    fun deleteCheckedItems() {
+        for (i in contactItemList.indices.reversed()) {
+            if (contactItemList[i].isChecked && contactItemList[i].wasUserSelected) {
+                contactItemList.removeAt(i)
+                adapter.notifyItemRemoved(i)
+            }
+        }
+    }
+
     private fun setUpAdapter() {
-        adapter = ContactItemAdapter(this,this, contactItemList)
+        adapter = ContactItemAdapter(this, this, contactItemList)
         binding.rvContactItems.adapter = adapter
         binding.rvContactItems.layoutManager = LinearLayoutManager(this)
-        binding.rvContactItems.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+        binding.rvContactItems.addItemDecoration(
+            DividerItemDecoration(
+                this,
+                DividerItemDecoration.VERTICAL
+            )
+        )
     }
 }

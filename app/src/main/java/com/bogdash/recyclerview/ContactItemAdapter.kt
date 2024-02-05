@@ -5,6 +5,7 @@ import android.provider.ContactsContract.DisplayPhoto
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
@@ -29,6 +30,12 @@ class ContactItemAdapter(
         holder.bind(contactItem)
         holder.itemView.setOnClickListener {
             mainActivity.editDialog(position)
+        }
+        holder.itemView.findViewById<CheckBox>(R.id.check_box).apply{
+            setOnCheckedChangeListener { _, isChecked ->
+                contactItem.isChecked = isChecked
+                contactItem.wasUserSelected = true
+            }
         }
     }
 
