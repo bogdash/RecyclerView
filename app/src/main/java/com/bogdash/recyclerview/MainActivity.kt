@@ -15,15 +15,16 @@ import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.bogdash.recyclerview.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
-    private val contactItemList: MutableList<ContactItem> = mutableListOf()
     private lateinit var adapter: ContactItemAdapter
     private lateinit var binding: ActivityMainBinding
+    private val contactItemList = mutableListOf<ContactItem>()
+    private val contactDataManager = ContactDataManager()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        populateList()
+        contactItemList.addAll(contactDataManager.generateMockContactList())
         setUpAdapter()
 
         binding.rvContactItems.addOnScrollListener(object : OnScrollListener() {
@@ -185,17 +186,6 @@ class MainActivity : AppCompatActivity() {
             setNegativeButton("Cancel") { _, _ -> }
             setView(dialogLayout)
             show()
-        }
-    }
-
-    private fun populateList() {
-        for (item in 1..30) {
-            val firstName = "Ivan $item"
-            val lastName = "Ivanovich $item"
-            val phone = (100 * item).toUInt()
-            val contactItem =
-                ContactItem(id = item, firstName = firstName, lastName = lastName, phone = phone)
-            contactItemList.add(contactItem)
         }
     }
 
