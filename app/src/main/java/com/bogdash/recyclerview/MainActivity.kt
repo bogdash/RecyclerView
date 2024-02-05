@@ -2,7 +2,6 @@ package com.bogdash.recyclerview
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -121,9 +120,6 @@ class MainActivity : AppCompatActivity() {
                 firstName = editTextFirstName.text.toString()
                 lastName = editTextLastName.text.toString()
                 phone = editTextPhone.text.toString()
-                Log.d("MyLog", firstName)
-                Log.d("MyLog", lastName)
-                Log.d("MyLog", phone)
 
                 val newId = contactItemList.size + 1
                 val newItem = ContactItem(newId, firstName, lastName, phone.toUInt())
@@ -138,12 +134,8 @@ class MainActivity : AppCompatActivity() {
                 contactItemList.add(newItem)
                 adapter.submitList(newList)
                 diffResult.dispatchUpdatesTo(adapter)
-
-                Log.d("MyLog", newId.toString())
             }
-            setNegativeButton("Cancel") { _, _ ->
-                Log.d("MyLog", "Negative button clicked")
-            }
+            setNegativeButton("Cancel") { _, _ -> }
 
             setView(dialogLayout)
             show()
@@ -158,28 +150,31 @@ class MainActivity : AppCompatActivity() {
         val editTextLastName = dialogLayout.findViewById<EditText>(R.id.tied_lastname)
         val editTextPhone = dialogLayout.findViewById<EditText>(R.id.ed_phone)
 
-        var firstName: String
-        var lastName: String
-        var phone: String
+        val originalItem = contactItemList[position].copy()
 
-        editTextFirstName.setText(contactItemList[position].firstName)
-        editTextLastName.setText(contactItemList[position].lastName)
-        editTextPhone.setText(contactItemList[position].phone.toString())
+        editTextFirstName.setText(originalItem.firstName)
+        editTextLastName.setText(originalItem.lastName)
+        editTextPhone.setText(originalItem.phone.toString())
 
         with(builder) {
             setPositiveButton("Ok") { _, _ ->
-                firstName = editTextFirstName.text.toString()
-                lastName = editTextLastName.text.toString()
-                phone = editTextPhone.text.toString()
+                val firstName = editTextFirstName.text.toString()
+                val lastName = editTextLastName.text.toString()
+                val phone = editTextPhone.text.toString()
 
-                contactItemList[position].firstName = firstName
-                contactItemList[position].lastName = lastName
-                contactItemList[position].phone = phone.toUInt()
-                adapter.notifyDataSetChanged()
+                if (originalItem.firstName != firstName || originalItem.lastName != lastName || originalItem.phone.toString() != phone) {
+                    contactItemList[position].firstName = firstName
+                    contactItemList[position].lastName = lastName
+                    contactItemList[position].phone = phone.toUInt()
+
+                    val newList = contactItemList.toList()
+                    val diffCallback = DiffUtilCallback(contactItemList, newList)
+                    val diffResult = DiffUtil.calculateDiff(diffCallback)
+                    adapter.submitList(newList)
+                    diffResult.dispatchUpdatesTo(adapter)
+                }
             }
-            setNegativeButton("Cancel") { _, _ ->
-                Log.d("MyLog", "Negative button clicked")
-            }
+            setNegativeButton("Cancel") { _, _ -> }
             setView(dialogLayout)
             show()
         }
