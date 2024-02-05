@@ -128,7 +128,7 @@ class MainActivity : AppCompatActivity() {
                 phone = editTextPhone.text.toString()
 
                 val newId = contactItemList.size + 1
-                val newItem = ContactItem(newId, firstName, lastName, phone.toUInt())
+                val newItem = ContactItem(newId, firstName, lastName, phone)
 
                 val newList = mutableListOf<ContactItem>().apply {
                     addAll(contactItemList)
@@ -174,7 +174,7 @@ class MainActivity : AppCompatActivity() {
                 if (originalItem.firstName != firstName || originalItem.lastName != lastName || originalItem.phone.toString() != phone) {
                     contactItemList[position].firstName = firstName
                     contactItemList[position].lastName = lastName
-                    contactItemList[position].phone = phone.toUInt()
+                    contactItemList[position].phone = phone
 
                     adapter.updateItem(position)
                     val newList = contactItemList.toList()
