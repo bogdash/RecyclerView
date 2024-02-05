@@ -15,7 +15,6 @@ class ContactItemAdapter(
     private val mainActivity: MainActivity,
     private val context: Context, private val contactItemList: MutableList<ContactItem>
 ) : RecyclerView.Adapter<ContactItemAdapter.ContactItemViewHolder>() {
-    var isDeleteModeActive = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactItemViewHolder {
         val binding = ContactItemLayoutBinding.inflate(LayoutInflater.from(context), parent, false)
@@ -28,7 +27,7 @@ class ContactItemAdapter(
 
     override fun onBindViewHolder(holder: ContactItemViewHolder, position: Int) {
         val contactItem = contactItemList[position]
-        holder.bind(contactItem, isDeleteModeActive)
+        holder.bind(contactItem, contactItem.isDeleteModeActive)
 
         holder.itemView.setOnClickListener {
             mainActivity.showEditDialog(position)

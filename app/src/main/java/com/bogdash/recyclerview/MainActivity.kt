@@ -5,11 +5,9 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -75,8 +73,6 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.delete -> {
                 isDeleteModeActive = !isDeleteModeActive
-
-                adapter.isDeleteModeActive = isDeleteModeActive
 
                 toggleFABVisibility(isDeleteModeActive)
 
