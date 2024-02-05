@@ -1,22 +1,18 @@
 package com.bogdash.recyclerview
 
-import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.CheckBox
 import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.bogdash.recyclerview.databinding.ActivityMainBinding
-import java.text.FieldPosition
 
 class MainActivity : AppCompatActivity() {
     private val contactItemList: MutableList<ContactItem> = mutableListOf()
@@ -50,21 +46,18 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.fabCancel.setOnClickListener {
-            clearChecks()
-            binding.fabCancel.visibility = View.GONE
-            binding.fabCheck.visibility = View.GONE
-            binding.fabAddContactItem.visibility = View.VISIBLE
+
         }
     }
-    fun clearChecks() {
+    private fun clearChecks() {
         for (contactItem in contactItemList) {
             contactItem.isChecked = false
         }
         adapter.notifyDataSetChanged()
     }
 
-
     // menu
+    private var isDeleteModeActive = false
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
         return super.onCreateOptionsMenu(menu)
@@ -73,20 +66,29 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.delete -> {
-                binding.fabAddContactItem.visibility = View.GONE
-                binding.fabCheck.visibility = View.VISIBLE
-                binding.fabCancel.visibility = View.VISIBLE
+                isDeleteModeActive = !isDeleteModeActive
+                if (isDeleteModeActive) {
+                    binding.fabAddContactItem.visibility = View.GONE
+                    binding.fabCheck.visibility = View.VISIBLE
+                    binding.fabCancel.visibility = View.VISIBLE
 
-                Toast.makeText(this, "Menu Item is Pressed", Toast.LENGTH_SHORT).show()
-                for (contactItem in contactItemList) {
-                    contactItem.isChecked = !contactItem.isChecked
+                    for (contactItem in contactItemList) {
+                        contactItem.isChecked = !contactItem.isChecked
+                    }
+                    adapter.notifyDataSetChanged()
+                } else {
+                    binding.fabCancel.visibility = View.GONE
+                    binding.fabCheck.visibility = View.GONE
+                    binding.fabAddContactItem.visibility = View.VISIBLE
+
+                    clearChecks()
                 }
-                adapter.notifyDataSetChanged()
                 return true
             }
         }
         return super.onOptionsItemSelected(item)
     }
+
 
     // dialog
 
@@ -173,7 +175,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun deleteCheckedItems() {
+    private fun deleteCheckedItems() {
         for (i in contactItemList.indices.reversed()) {
             if (contactItemList[i].isChecked && contactItemList[i].wasUserSelected) {
                 contactItemList.removeAt(i)
