@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bogdash.recyclerview.databinding.ContactItemLayoutBinding
 
@@ -37,9 +38,15 @@ class ContactItemAdapter(
     }
 
     fun submitList(newList: List<ContactItem>) {
+        val diffCallback = DiffUtilCallback(contactItemList, newList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
         contactItemList.clear()
         contactItemList.addAll(newList)
-        notifyDataSetChanged() // Также можете использовать notifyItemRangeChanged() для более точного обновления
+        diffResult.dispatchUpdatesTo(this)
+    }
+
+    fun updateItem(position: Int) {
+        notifyItemChanged(position)
     }
 
     class ContactItemViewHolder(contactItemLayoutBinding: ContactItemLayoutBinding) :

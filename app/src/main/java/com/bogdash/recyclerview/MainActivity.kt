@@ -51,10 +51,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun resetSelections() {
-        for (contactItem in contactItemList) {
-            contactItem.wasUserSelected = false
-        }
-        adapter.notifyDataSetChanged()
+        val newList = contactItemList.map { it.copy(wasUserSelected = false) }
+        val diffCallback = DiffUtilCallback(contactItemList, newList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+
+        contactItemList.forEach { it.wasUserSelected = false }
+        adapter.submitList(newList)
+        diffResult.dispatchUpdatesTo(adapter)
     }
 
     private fun clearChecks() {
@@ -136,6 +139,10 @@ class MainActivity : AppCompatActivity() {
                 contactItemList.add(newItem)
                 adapter.submitList(newList)
                 diffResult.dispatchUpdatesTo(adapter)
+
+                val newPosition = adapter.itemCount - 1
+
+                binding.rvContactItems.smoothScrollToPosition(newPosition)
             }
             setNegativeButton("Cancel") { _, _ -> }
             setView(dialogLayout)
@@ -168,10 +175,10 @@ class MainActivity : AppCompatActivity() {
                     contactItemList[position].lastName = lastName
                     contactItemList[position].phone = phone.toUInt()
 
+                    adapter.updateItem(position)
                     val newList = contactItemList.toList()
                     val diffCallback = DiffUtilCallback(contactItemList, newList)
                     val diffResult = DiffUtil.calculateDiff(diffCallback)
-                    adapter.submitList(newList)
                     diffResult.dispatchUpdatesTo(adapter)
                 }
             }
