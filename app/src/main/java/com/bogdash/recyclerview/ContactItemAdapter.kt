@@ -57,7 +57,7 @@ class ContactItemAdapter(
         fun bind(contactItem: ContactItem) {
             binding.tvFirstname.text = contactItem.firstName
             binding.tvLastname.text = contactItem.lastName
-            binding.tvPhone.text = "${contactItem.phone}"
+            binding.tvPhone.text = contactItem.phone
             binding.checkBox.visibility = if (contactItem.isChecked) View.VISIBLE else View.GONE
         }
     }

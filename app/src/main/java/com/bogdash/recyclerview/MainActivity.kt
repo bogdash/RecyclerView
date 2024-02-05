@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -155,12 +156,13 @@ class MainActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         val inflater = layoutInflater
         val dialogLayout = inflater.inflate(R.layout.dialog, null)
+        val tvEditContact = dialogLayout.findViewById<TextView>(R.id.tv_add_contact)
         val editTextFirstName = dialogLayout.findViewById<EditText>(R.id.tied_firstname)
         val editTextLastName = dialogLayout.findViewById<EditText>(R.id.tied_lastname)
         val editTextPhone = dialogLayout.findViewById<EditText>(R.id.ed_phone)
 
         val originalItem = contactItemList[position].copy()
-
+        tvEditContact.text = getString(R.string.edit_contact)
         editTextFirstName.setText(originalItem.firstName)
         editTextLastName.setText(originalItem.lastName)
         editTextPhone.setText(originalItem.phone.toString())
