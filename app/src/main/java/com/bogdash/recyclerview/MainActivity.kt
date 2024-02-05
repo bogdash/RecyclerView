@@ -58,10 +58,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun clearChecks() {
-        for (contactItem in contactItemList) {
-            contactItem.isChecked = false
-        }
-        adapter.notifyDataSetChanged()
+        val newList = contactItemList.map { it.copy(isChecked = false) }
+        val diffCallback = DiffUtilCallback(contactItemList, newList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+
+        contactItemList.forEach { it.isChecked = false }
+        adapter.submitList(newList)
+        diffResult.dispatchUpdatesTo(adapter)
     }
 
     // menu
