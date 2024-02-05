@@ -80,19 +80,13 @@ class MainActivity : AppCompatActivity() {
             R.id.delete -> {
                 isDeleteModeActive = !isDeleteModeActive
                 if (isDeleteModeActive) {
-                    binding.fabAddContactItem.visibility = View.GONE
-                    binding.fabCheck.visibility = View.VISIBLE
-                    binding.fabCancel.visibility = View.VISIBLE
-
+                    toggleFABVisibility(isDeleteModeActive)
                     for (contactItem in contactItemList) {
                         contactItem.isChecked = !contactItem.isChecked
                     }
                     adapter.notifyDataSetChanged()
                 } else {
-                    binding.fabCancel.visibility = View.GONE
-                    binding.fabCheck.visibility = View.GONE
-                    binding.fabAddContactItem.visibility = View.VISIBLE
-
+                    toggleFABVisibility(isDeleteModeActive)
                     clearChecks()
                 }
                 return true
@@ -101,6 +95,11 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    private fun toggleFABVisibility(visible: Boolean) {
+        binding.fabAddContactItem.visibility = if (visible) View.GONE else View.VISIBLE
+        binding.fabCheck.visibility = if (visible) View.VISIBLE else View.GONE
+        binding.fabCancel.visibility = if (visible) View.VISIBLE else View.GONE
+    }
 
     // dialog
 
