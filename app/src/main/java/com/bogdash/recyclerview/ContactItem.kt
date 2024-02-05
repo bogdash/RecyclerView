@@ -6,5 +6,5 @@ data class ContactItem(
     var lastName: String,
     var phone: String,
     var isChecked: Boolean = false,
-    var wasUserSelected: Boolean = false
+    var isDeleteModeActive: Boolean = false
 )

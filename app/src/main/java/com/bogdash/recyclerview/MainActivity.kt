@@ -5,9 +5,11 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -53,16 +55,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun resetSelections() {
-        val newList = contactItemList.map { it.copy(wasUserSelected = false) }
-        val diffCallback = DiffUtilCallback(contactItemList, newList)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
-
-        contactItemList.forEach { it.wasUserSelected = false }
-        adapter.submitList(newList)
-        diffResult.dispatchUpdatesTo(adapter)
-    }
-
-    private fun clearChecks() {
         val newList = contactItemList.map { it.copy(isChecked = false) }
         val diffCallback = DiffUtilCallback(contactItemList, newList)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
@@ -83,20 +75,24 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.delete -> {
                 isDeleteModeActive = !isDeleteModeActive
-                if (isDeleteModeActive) {
-                    toggleFABVisibility(isDeleteModeActive)
 
-                    val newList = contactItemList.map { it.copy(isChecked = true) }
-                    val diffCallback = DiffUtilCallback(contactItemList, newList)
-                    val diffResult = DiffUtil.calculateDiff(diffCallback)
+                adapter.isDeleteModeActive = isDeleteModeActive
 
-                    contactItemList.forEach { it.isChecked = true }
-                    adapter.submitList(newList)
-                    diffResult.dispatchUpdatesTo(adapter)
-                } else {
-                    toggleFABVisibility(isDeleteModeActive)
-                    clearChecks()
+                toggleFABVisibility(isDeleteModeActive)
+
+                if (!isDeleteModeActive) {
+                    contactItemList.forEach { it.isChecked = false }
                 }
+
+                val newList = contactItemList.map { it.copy(isDeleteModeActive = isDeleteModeActive) }
+                val diffCallback = DiffUtilCallback(contactItemList, newList)
+                val diffResult = DiffUtil.calculateDiff(diffCallback)
+
+                contactItemList.forEach { it.isChecked = !isDeleteModeActive }
+
+                adapter.submitList(newList)
+                diffResult.dispatchUpdatesTo(adapter)
+
                 return true
             }
         }
@@ -193,7 +189,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun deleteCheckedItems() {
         for (i in contactItemList.indices.reversed()) {
-            if (contactItemList[i].isChecked && contactItemList[i].wasUserSelected) {
+            if (contactItemList[i].isChecked) {
                 contactItemList.removeAt(i)
                 adapter.notifyItemRemoved(i)
             }
