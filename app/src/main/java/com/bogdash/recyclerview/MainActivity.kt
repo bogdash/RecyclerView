@@ -31,8 +31,12 @@ class MainActivity : AppCompatActivity() {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0) {
                     binding.fabAddContactItem.hide()
+                    binding.fabCancel.hide()
+                    binding.fabCheck.hide()
                 } else {
                     binding.fabAddContactItem.show()
+                    binding.fabCancel.show()
+                    binding.fabCheck.show()
                 }
             }
         })
@@ -46,9 +50,17 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.fabCancel.setOnClickListener {
-
+            resetSelections()
         }
     }
+
+    private fun resetSelections() {
+        for (contactItem in contactItemList) {
+            contactItem.wasUserSelected = false
+        }
+        adapter.notifyDataSetChanged()
+    }
+
     private fun clearChecks() {
         for (contactItem in contactItemList) {
             contactItem.isChecked = false
@@ -105,7 +117,7 @@ class MainActivity : AppCompatActivity() {
         var phone: String
 
         with(builder) {
-            setPositiveButton("OK") { dialog, which ->
+            setPositiveButton("OK") { _, _ ->
                 firstName = editTextFirstName.text.toString()
                 lastName = editTextLastName.text.toString()
                 phone = editTextPhone.text.toString()
@@ -144,7 +156,7 @@ class MainActivity : AppCompatActivity() {
         editTextPhone.setText(contactItemList[position].phone.toString())
 
         with(builder) {
-            setPositiveButton("Ok") { dialog, which ->
+            setPositiveButton("Ok") { _, _ ->
                 firstName = editTextFirstName.text.toString()
                 lastName = editTextLastName.text.toString()
                 phone = editTextPhone.text.toString()
