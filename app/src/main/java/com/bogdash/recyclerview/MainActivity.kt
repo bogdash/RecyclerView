@@ -31,12 +31,8 @@ class MainActivity : AppCompatActivity() {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0) {
                     binding.fabAddContactItem.hide()
-                    binding.fabCancel.hide()
-                    binding.fabCheck.hide()
                 } else {
                     binding.fabAddContactItem.show()
-                    binding.fabCancel.show()
-                    binding.fabCheck.show()
                 }
             }
         })
@@ -81,10 +77,14 @@ class MainActivity : AppCompatActivity() {
                 isDeleteModeActive = !isDeleteModeActive
                 if (isDeleteModeActive) {
                     toggleFABVisibility(isDeleteModeActive)
-                    for (contactItem in contactItemList) {
-                        contactItem.isChecked = !contactItem.isChecked
-                    }
-                    adapter.notifyDataSetChanged()
+
+                    val newList = contactItemList.map { it.copy(isChecked = true) }
+                    val diffCallback = DiffUtilCallback(contactItemList, newList)
+                    val diffResult = DiffUtil.calculateDiff(diffCallback)
+
+                    contactItemList.forEach { it.isChecked = true }
+                    adapter.submitList(newList)
+                    diffResult.dispatchUpdatesTo(adapter)
                 } else {
                     toggleFABVisibility(isDeleteModeActive)
                     clearChecks()
@@ -102,7 +102,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     // dialog
-
     private fun showAddDialog() {
         val builder = AlertDialog.Builder(this)
         val inflater = layoutInflater
@@ -136,7 +135,6 @@ class MainActivity : AppCompatActivity() {
                 diffResult.dispatchUpdatesTo(adapter)
             }
             setNegativeButton("Cancel") { _, _ -> }
-
             setView(dialogLayout)
             show()
         }
@@ -185,7 +183,6 @@ class MainActivity : AppCompatActivity() {
             val firstName = "Ivan $item"
             val lastName = "Ivanovich $item"
             val phone = (100 * item).toUInt()
-
             val contactItem =
                 ContactItem(id = item, firstName = firstName, lastName = lastName, phone = phone)
             contactItemList.add(contactItem)
