@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -42,7 +43,7 @@ class MainActivity : AppCompatActivity() {
         })
 
         binding.fabAddContactItem.setOnClickListener {
-            showDialog()
+            showAddDialog()
         }
 
         binding.fabCheck.setOnClickListener {
@@ -103,7 +104,7 @@ class MainActivity : AppCompatActivity() {
 
     // dialog
 
-    private fun showDialog() {
+    private fun showAddDialog() {
         val builder = AlertDialog.Builder(this)
         val inflater = layoutInflater
         val dialogLayout = inflater.inflate(R.layout.dialog, null)
@@ -125,8 +126,19 @@ class MainActivity : AppCompatActivity() {
                 Log.d("MyLog", phone)
 
                 val newId = contactItemList.size + 1
-                contactItemList.add(ContactItem(newId, firstName, lastName, phone.toUInt()))
-                adapter.notifyDataSetChanged() //diff util
+                val newItem = ContactItem(newId, firstName, lastName, phone.toUInt())
+
+                val newList = mutableListOf<ContactItem>().apply {
+                    addAll(contactItemList)
+                    add(newItem)
+                }
+
+                val diffCallback = DiffUtilCallback(contactItemList, newList)
+                val diffResult = DiffUtil.calculateDiff(diffCallback)
+                contactItemList.add(newItem)
+                adapter.submitList(newList)
+                diffResult.dispatchUpdatesTo(adapter)
+
                 Log.d("MyLog", newId.toString())
             }
             setNegativeButton("Cancel") { _, _ ->
@@ -138,7 +150,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun editDialog(position: Int) {
+    fun showEditDialog(position: Int) {
         val builder = AlertDialog.Builder(this)
         val inflater = layoutInflater
         val dialogLayout = inflater.inflate(R.layout.dialog, null)
@@ -168,7 +180,6 @@ class MainActivity : AppCompatActivity() {
             setNegativeButton("Cancel") { _, _ ->
                 Log.d("MyLog", "Negative button clicked")
             }
-
             setView(dialogLayout)
             show()
         }

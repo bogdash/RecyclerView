@@ -1,13 +1,10 @@
 package com.bogdash.recyclerview
 
 import android.content.Context
-import android.provider.ContactsContract.DisplayPhoto
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
-import android.widget.EditText
-import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.bogdash.recyclerview.databinding.ContactItemLayoutBinding
 
@@ -29,7 +26,7 @@ class ContactItemAdapter(
         val contactItem = contactItemList[position]
         holder.bind(contactItem)
         holder.itemView.setOnClickListener {
-            mainActivity.editDialog(position)
+            mainActivity.showEditDialog(position)
         }
         holder.itemView.findViewById<CheckBox>(R.id.check_box).apply{
             setOnCheckedChangeListener { _, isChecked ->
@@ -37,6 +34,12 @@ class ContactItemAdapter(
                 contactItem.wasUserSelected = true
             }
         }
+    }
+
+    fun submitList(newList: List<ContactItem>) {
+        contactItemList.clear()
+        contactItemList.addAll(newList)
+        notifyDataSetChanged() // Также можете использовать notifyItemRangeChanged() для более точного обновления
     }
 
     class ContactItemViewHolder(contactItemLayoutBinding: ContactItemLayoutBinding) :
