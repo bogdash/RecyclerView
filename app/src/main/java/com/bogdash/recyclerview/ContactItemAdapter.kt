@@ -1,12 +1,10 @@
 package com.bogdash.recyclerview
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bogdash.recyclerview.databinding.ContactItemLayoutBinding
@@ -36,8 +34,7 @@ class ContactItemAdapter(
         holder.itemView.findViewById<CheckBox>(R.id.check_box).apply {
             this.isChecked = contactItem.isChecked
 
-            setOnClickListener() { _ ->
-                Log.d("MyLog", "FUCK")
+            setOnClickListener { _ ->
                 contactItem.isChecked = !contactItem.isChecked
             }
         }

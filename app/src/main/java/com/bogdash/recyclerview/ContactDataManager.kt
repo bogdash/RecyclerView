@@ -3,7 +3,7 @@ package com.bogdash.recyclerview
 class ContactDataManager {
     fun generateMockContactList(): List<ContactItem> {
         val contactItemList = mutableListOf<ContactItem>()
-        for (item in 1..30) {
+        for (item in 1..100) {
             val firstName = "Ivan $item"
             val lastName = "Ivanovich $item"
             val phone = generateRandomPhoneNumber()

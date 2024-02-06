@@ -18,6 +18,7 @@ import com.bogdash.recyclerview.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
     private lateinit var adapter: ContactItemAdapter
     private lateinit var binding: ActivityMainBinding
+    private var isDeleteModeActive = false
     private val contactItemList = mutableListOf<ContactItem>()
     private val contactDataManager = ContactDataManager()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,18 +53,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun resetSelections() {
-        val newList = contactItemList.map { it.copy(isChecked = false) }
-        val diffCallback = DiffUtilCallback(contactItemList, newList)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
-
-        contactItemList.forEach { it.isChecked = false }
-        adapter.submitList(newList)
-        diffResult.dispatchUpdatesTo(adapter)
-    }
-
-    // menu
-    private var isDeleteModeActive = false
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
         return super.onCreateOptionsMenu(menu)
@@ -80,7 +69,8 @@ class MainActivity : AppCompatActivity() {
                     contactItemList.forEach { it.isChecked = false }
                 }
 
-                val newList = contactItemList.map { it.copy(isDeleteModeActive = isDeleteModeActive) }
+                val newList =
+                    contactItemList.map { it.copy(isDeleteModeActive = isDeleteModeActive) }
                 val diffCallback = DiffUtilCallback(contactItemList, newList)
                 val diffResult = DiffUtil.calculateDiff(diffCallback)
 
@@ -95,13 +85,22 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    private fun resetSelections() {
+        val newList = contactItemList.map { it.copy(isChecked = false) }
+        val diffCallback = DiffUtilCallback(contactItemList, newList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+
+        contactItemList.forEach { it.isChecked = false }
+        adapter.submitList(newList)
+        diffResult.dispatchUpdatesTo(adapter)
+    }
+
     private fun toggleFABVisibility(visible: Boolean) {
         binding.fabAddContactItem.visibility = if (visible) View.GONE else View.VISIBLE
         binding.fabCheck.visibility = if (visible) View.VISIBLE else View.GONE
         binding.fabCancel.visibility = if (visible) View.VISIBLE else View.GONE
     }
 
-    // dialog
     private fun showAddDialog() {
         val builder = AlertDialog.Builder(this)
         val inflater = layoutInflater
@@ -144,45 +143,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun showEditDialog(position: Int) {
-        val builder = AlertDialog.Builder(this)
-        val inflater = layoutInflater
-        val dialogLayout = inflater.inflate(R.layout.dialog, null)
-        val tvEditContact = dialogLayout.findViewById<TextView>(R.id.tv_add_contact)
-        val editTextFirstName = dialogLayout.findViewById<EditText>(R.id.tied_firstname)
-        val editTextLastName = dialogLayout.findViewById<EditText>(R.id.tied_lastname)
-        val editTextPhone = dialogLayout.findViewById<EditText>(R.id.ed_phone)
-
-        val originalItem = contactItemList[position].copy()
-        tvEditContact.text = getString(R.string.edit_contact)
-        editTextFirstName.setText(originalItem.firstName)
-        editTextLastName.setText(originalItem.lastName)
-        editTextPhone.setText(originalItem.phone.toString())
-
-        with(builder) {
-            setPositiveButton("Ok") { _, _ ->
-                val firstName = editTextFirstName.text.toString()
-                val lastName = editTextLastName.text.toString()
-                val phone = editTextPhone.text.toString()
-
-                if (originalItem.firstName != firstName || originalItem.lastName != lastName || originalItem.phone.toString() != phone) {
-                    contactItemList[position].firstName = firstName
-                    contactItemList[position].lastName = lastName
-                    contactItemList[position].phone = phone
-
-                    adapter.updateItem(position)
-                    val newList = contactItemList.toList()
-                    val diffCallback = DiffUtilCallback(contactItemList, newList)
-                    val diffResult = DiffUtil.calculateDiff(diffCallback)
-                    diffResult.dispatchUpdatesTo(adapter)
-                }
-            }
-            setNegativeButton("Cancel") { _, _ -> }
-            setView(dialogLayout)
-            show()
-        }
-    }
-
     private fun deleteCheckedItems() {
         for (i in contactItemList.indices.reversed()) {
             if (contactItemList[i].isChecked) {
@@ -202,5 +162,44 @@ class MainActivity : AppCompatActivity() {
                 DividerItemDecoration.VERTICAL
             )
         )
+    }
+
+    fun showEditDialog(position: Int) {
+        val builder = AlertDialog.Builder(this)
+        val inflater = layoutInflater
+        val dialogLayout = inflater.inflate(R.layout.dialog, null)
+        val tvEditContact = dialogLayout.findViewById<TextView>(R.id.tv_add_contact)
+        val editTextFirstName = dialogLayout.findViewById<EditText>(R.id.tied_firstname)
+        val editTextLastName = dialogLayout.findViewById<EditText>(R.id.tied_lastname)
+        val editTextPhone = dialogLayout.findViewById<EditText>(R.id.ed_phone)
+
+        val originalItem = contactItemList[position].copy()
+        tvEditContact.text = getString(R.string.edit_contact)
+        editTextFirstName.setText(originalItem.firstName)
+        editTextLastName.setText(originalItem.lastName)
+        editTextPhone.setText(originalItem.phone)
+
+        with(builder) {
+            setPositiveButton("Ok") { _, _ ->
+                val firstName = editTextFirstName.text.toString()
+                val lastName = editTextLastName.text.toString()
+                val phone = editTextPhone.text.toString()
+
+                if (originalItem.firstName != firstName || originalItem.lastName != lastName || originalItem.phone != phone) {
+                    contactItemList[position].firstName = firstName
+                    contactItemList[position].lastName = lastName
+                    contactItemList[position].phone = phone
+
+                    adapter.updateItem(position)
+                    val newList = contactItemList.toList()
+                    val diffCallback = DiffUtilCallback(contactItemList, newList)
+                    val diffResult = DiffUtil.calculateDiff(diffCallback)
+                    diffResult.dispatchUpdatesTo(adapter)
+                }
+            }
+            setNegativeButton("Cancel") { _, _ -> }
+            setView(dialogLayout)
+            show()
+        }
     }
 }
