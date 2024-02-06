@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Recycler View</string>
+    <string name="add_contact">Добавить контакт</string>
+    <string name="edit_contact">Редактировать контакт</string>
+    <string name="first_name">Имя</string>
+    <string name="last_name">Фамилия</string>
+    <string name="phone">Телефон</string>
+
+    <string name="delete">Удалить</string>
 </resources>
